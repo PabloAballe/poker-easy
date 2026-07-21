@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import PlayingCard from '../common/PlayingCard.jsx';
 import ActionControls from './ActionControls.jsx';
 import CoachHUD from './CoachHUD.jsx';
+import LiveLeaderboard from './LiveLeaderboard.jsx';
 import { sound } from '../../engine/sound.js';
 import confetti from 'canvas-confetti';
 import { processPlayerAction, startNewHand } from '../../engine/gameEngine.js';
@@ -73,8 +74,8 @@ export default function PokerTable({ gameState, setGameState, assistedMode, setA
   const heroPlayer = players.find(p => p.isHuman);
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      {/* AI Coach HUD */}
+    <div className="space-y-4 max-w-7xl mx-auto">
+      {/* AI Coach HUD (Compact Top Bar) */}
       {heroPlayer && (
         <CoachHUD
           heroHand={heroPlayer.cards}
@@ -88,122 +89,133 @@ export default function PokerTable({ gameState, setGameState, assistedMode, setA
         />
       )}
 
-      {/* Oval Felt Table Container */}
-      <div className="relative bg-emerald-950/90 border-[12px] border-amber-950/80 rounded-[120px] p-8 md:p-12 min-h-[480px] flex flex-col justify-between shadow-2xl shadow-emerald-950/80 overflow-hidden">
-        {/* Felt Inner Texture Ring */}
-        <div className="absolute inset-4 rounded-[100px] border-2 border-emerald-700/30 pointer-events-none"></div>
+      {/* Main Grid: Left = Table & Controls, Right = Real-Time Leaderboard */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-4 items-start">
+        {/* Left Column: Poker Felt Table */}
+        <div className="space-y-3">
+          {/* Oval Felt Table Container */}
+          <div className="relative bg-emerald-950/90 border-[8px] border-amber-950/80 rounded-[80px] p-4 md:p-6 min-h-[380px] flex flex-col justify-between shadow-xl shadow-emerald-950/80 overflow-hidden">
+            {/* Felt Inner Texture Ring */}
+            <div className="absolute inset-3 rounded-[60px] border border-emerald-700/30 pointer-events-none"></div>
 
-        {/* Center Community Cards & Pot */}
-        <div className="relative z-10 my-auto text-center space-y-4">
-          <div className="inline-block bg-slate-950/80 border border-amber-500/40 px-5 py-2 rounded-full shadow-lg">
-            <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block">Bote Total</span>
-            <span className="text-2xl font-black text-white">{pot} 🪙</span>
-          </div>
+            {/* Center Community Cards & Pot */}
+            <div className="relative z-10 my-auto text-center space-y-2">
+              <div className="inline-block bg-slate-950/85 border border-amber-500/40 px-4 py-1 rounded-full shadow-md">
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block">Bote Total</span>
+                <span className="text-xl font-black text-white">{pot} 🪙</span>
+              </div>
 
-          {/* Community Cards */}
-          <div className="flex justify-center items-center gap-2 min-h-[90px]">
-            {[0, 1, 2, 3, 4].map((idx) => {
-              const card = communityCards[idx];
-              return (
-                <div key={idx} className="transition-all duration-300">
-                  {card ? (
-                    <PlayingCard card={card} size="md" highlighted={true} />
-                  ) : (
-                    <PlayingCard faceDown={true} size="md" className="opacity-20" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Street Name Badge */}
-          <div className="text-xs font-black tracking-widest text-emerald-400/80 uppercase">
-            — {street} —
-          </div>
-        </div>
-
-        {/* Players Seats Grid around the Table */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 relative z-10 mt-6">
-          {players.map((player, idx) => {
-            const isTurn = currentTurn === idx && street !== 'SHOWDOWN';
-            const isHero = player.isHuman;
-
-            return (
-              <div
-                key={player.id}
-                className={`relative flex flex-col items-center p-3 rounded-2xl border transition-all ${
-                  player.folded
-                    ? 'opacity-40 bg-slate-900/40 border-slate-800'
-                    : isTurn
-                    ? 'bg-amber-500/20 border-amber-400 ring-4 ring-amber-400/40 shadow-lg shadow-amber-400/20 scale-105'
-                    : player.isWinner
-                    ? 'bg-emerald-500/30 border-emerald-400 ring-4 ring-emerald-400 shadow-xl'
-                    : 'bg-slate-900/80 border-slate-800'
-                }`}
-              >
-                {/* Dealer Button Badge */}
-                {gameState.dealerIdx === idx && (
-                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-yellow-400 text-slate-950 font-black text-xs flex items-center justify-center border-2 border-slate-900 shadow-md">
-                    D
-                  </span>
-                )}
-
-                {/* Avatar & Name */}
-                <div className="text-2xl mb-1">{player.avatar}</div>
-                <div className="text-xs font-black text-white truncate max-w-[80px]">{player.name}</div>
-                <div className="text-[11px] font-bold text-amber-300">{player.chips} 🪙</div>
-
-                {/* Action Chip Badge */}
-                {player.lastAction && (
-                  <span className="mt-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-950/90 text-slate-300 border border-slate-700">
-                    {player.lastAction}
-                  </span>
-                )}
-
-                {/* Cards Display */}
-                <div className="flex gap-1 mt-2">
-                  {player.cards.map((c, cIdx) => (
-                    <div key={cIdx}>
-                      {isHero || street === 'SHOWDOWN' ? (
-                        <PlayingCard card={c} size="sm" />
+              {/* Community Cards */}
+              <div className="flex justify-center items-center gap-1.5 min-h-[75px]">
+                {[0, 1, 2, 3, 4].map((idx) => {
+                  const card = communityCards[idx];
+                  return (
+                    <div key={idx} className="transition-all duration-300">
+                      {card ? (
+                        <PlayingCard card={card} size="sm" highlighted={true} />
                       ) : (
-                        <PlayingCard faceDown={true} size="sm" />
+                        <PlayingCard faceDown={true} size="sm" className="opacity-20" />
                       )}
                     </div>
-                  ))}
-                </div>
-
-                {/* Hand Result Description on Showdown */}
-                {street === 'SHOWDOWN' && player.handResultDesc && !player.folded && (
-                  <div className="mt-1 text-[9px] font-extrabold text-amber-300 bg-slate-950/90 px-1.5 py-0.5 rounded border border-amber-500/30 text-center">
-                    {player.handResultDesc}
-                  </div>
-                )}
+                  );
+                })}
               </div>
-            );
-          })}
+
+              {/* Street Name Badge */}
+              <div className="text-[10px] font-black tracking-widest text-emerald-400/80 uppercase">
+                — {street} —
+              </div>
+            </div>
+
+            {/* Players Seats Grid around the Table */}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-2 relative z-10 mt-3">
+              {players.map((player, idx) => {
+                const isTurn = currentTurn === idx && street !== 'SHOWDOWN';
+                const isHero = player.isHuman;
+
+                return (
+                  <div
+                    key={player.id}
+                    className={`relative flex flex-col items-center p-2 rounded-xl border transition-all ${
+                      player.folded
+                        ? 'opacity-40 bg-slate-900/40 border-slate-800'
+                        : isTurn
+                        ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/40 shadow-lg scale-105'
+                        : player.isWinner
+                        ? 'bg-emerald-500/30 border-emerald-400 ring-2 ring-emerald-400 shadow-lg'
+                        : 'bg-slate-900/80 border-slate-800'
+                    }`}
+                  >
+                    {/* Dealer Button Badge */}
+                    {gameState.dealerIdx === idx && (
+                      <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-yellow-400 text-slate-950 font-black text-[10px] flex items-center justify-center border border-slate-900 shadow-md">
+                        D
+                      </span>
+                    )}
+
+                    {/* Avatar & Name */}
+                    <div className="text-xl leading-none">{player.avatar}</div>
+                    <div className="text-[11px] font-black text-white truncate max-w-[70px] mt-0.5">{player.name}</div>
+                    <div className="text-[10px] font-bold text-amber-300">{player.chips} 🪙</div>
+
+                    {/* Action Chip Badge */}
+                    {player.lastAction && (
+                      <span className="mt-0.5 text-[9px] font-black px-1.5 py-0.2 rounded bg-slate-950/90 text-slate-300 border border-slate-700">
+                        {player.lastAction}
+                      </span>
+                    )}
+
+                    {/* Cards Display */}
+                    <div className="flex gap-0.5 mt-1">
+                      {player.cards.map((c, cIdx) => (
+                        <div key={cIdx}>
+                          {isHero || street === 'SHOWDOWN' ? (
+                            <PlayingCard card={c} size="sm" />
+                          ) : (
+                            <PlayingCard faceDown={true} size="sm" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Hand Result Description on Showdown */}
+                    {street === 'SHOWDOWN' && player.handResultDesc && !player.folded && (
+                      <div className="mt-1 text-[8px] font-extrabold text-amber-300 bg-slate-950/90 px-1 py-0.2 rounded border border-amber-500/30 text-center leading-tight">
+                        {player.handResultDesc}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Showdown Winner Banner */}
+          {street === 'SHOWDOWN' && (
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-3 rounded-xl flex items-center justify-between text-slate-950 font-black shadow-lg text-xs">
+              <span>{winnerNotice}</span>
+              <button
+                onClick={handleNextHand}
+                className="px-4 py-2 bg-slate-950 text-white rounded-lg text-xs font-bold hover:bg-slate-900 transition-all shadow"
+              >
+                Siguiente Mano →
+              </button>
+            </div>
+          )}
+
+          {/* Action Controls for Hero Turn */}
+          <ActionControls
+            gameState={gameState}
+            onAction={handleAction}
+            disabled={!isHumanTurn}
+          />
+        </div>
+
+        {/* Right Column: Real-Time Live Chip Leaderboard */}
+        <div className="w-full">
+          <LiveLeaderboard players={players} />
         </div>
       </div>
-
-      {/* Showdown Winner Banner */}
-      {street === 'SHOWDOWN' && (
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 rounded-2xl flex items-center justify-between text-slate-950 font-black shadow-xl">
-          <span>{winnerNotice}</span>
-          <button
-            onClick={handleNextHand}
-            className="px-5 py-2.5 bg-slate-950 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition-all shadow-md"
-          >
-            Siguiente Mano →
-          </button>
-        </div>
-      )}
-
-      {/* Action Controls for Hero Turn */}
-      <ActionControls
-        gameState={gameState}
-        onAction={handleAction}
-        disabled={!isHumanTurn}
-      />
     </div>
   );
 }
