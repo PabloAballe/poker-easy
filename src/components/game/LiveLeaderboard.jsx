@@ -1,24 +1,47 @@
-import React from 'react';
-import { Trophy, TrendingUp, TrendingDown, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trophy, TrendingUp, TrendingDown, Users, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function LiveLeaderboard({ players }) {
+  const [mobileExpanded, setMobileExpanded] = useState(false);
+
   // Sort players by chip count descending
   const sortedPlayers = [...players].sort((a, b) => b.chips - a.chips);
 
+  const heroPlayer = players.find(p => p.isHuman);
+  const heroRank = sortedPlayers.findIndex(p => p.isHuman) + 1;
+
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 space-y-2.5 shadow-lg">
+      {/* Header with Mobile Accordion Toggle */}
+      <div
+        className="flex items-center justify-between cursor-pointer md:cursor-default"
+        onClick={() => setMobileExpanded(!mobileExpanded)}
+      >
         <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-amber-400" />
-          <h3 className="text-xs font-black text-white uppercase tracking-wider">Ranking en Vivo</h3>
+          <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+          <h3 className="text-xs font-black text-white uppercase tracking-wider">
+            Ranking en Vivo
+            {heroPlayer && (
+              <span className="ml-2 text-amber-400 font-extrabold text-[11px] md:hidden">
+                (Tú: {heroRank}º - {heroPlayer.chips}🪙)
+              </span>
+            )}
+          </h3>
         </div>
-        <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-          <Users className="w-3 h-3" />
-          6 Jugadores
-        </span>
+
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] font-bold text-slate-400 hidden sm:flex items-center gap-1">
+            <Users className="w-3 h-3" />
+            6 Jugadores
+          </span>
+          <button className="text-slate-400 md:hidden p-1">
+            {mobileExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-1.5">
+      {/* Leaderboard List (Always open on Desktop, collapsible on Mobile) */}
+      <div className={`space-y-1.5 transition-all ${mobileExpanded ? 'block' : 'hidden md:block'}`}>
         {sortedPlayers.map((player, rankIdx) => {
           const rankNum = rankIdx + 1;
           const isHero = player.isHuman;
