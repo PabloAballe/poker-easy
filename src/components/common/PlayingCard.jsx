@@ -2,8 +2,14 @@ import React from 'react';
 
 export default function PlayingCard({ card, faceDown = false, size = 'md', highlighted = false, className = '' }) {
   const sizeConfig = {
+    xs: {
+      box: 'w-7.5 h-11 text-[9px] p-0.5 border',
+      cornerRank: 'text-[10px] font-black leading-none',
+      cornerSuit: 'text-[8px] leading-none',
+      centerSuit: 'text-xs'
+    },
     sm: {
-      box: 'w-9 h-13 text-[10px] p-0.5 border',
+      box: 'w-8.5 h-12 text-[10px] p-0.5 border',
       cornerRank: 'text-[11px] font-black leading-none',
       cornerSuit: 'text-[9px] leading-none',
       centerSuit: 'text-sm'
@@ -30,9 +36,9 @@ export default function PlayingCard({ card, faceDown = false, size = 'md', highl
 
   if (faceDown || !card) {
     return (
-      <div className={`relative ${sizeConfig.box} rounded-lg bg-gradient-to-br from-indigo-800 via-slate-900 to-indigo-950 border-indigo-400/40 shadow-md flex items-center justify-center select-none ${className}`}>
-        <div className="w-4/5 h-4/5 border border-indigo-400/30 rounded bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:6px_6px] opacity-40"></div>
-        <div className="absolute text-indigo-300/80 font-bold text-xs">♠</div>
+      <div className={`relative ${sizeConfig.box} rounded bg-gradient-to-br from-indigo-800 via-slate-900 to-indigo-950 border-indigo-400/40 shadow-sm flex items-center justify-center select-none ${className}`}>
+        <div className="w-4/5 h-4/5 border border-indigo-400/30 rounded bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:5px_5px] opacity-40"></div>
+        <div className="absolute text-indigo-300/80 font-bold text-[10px]">♠</div>
       </div>
     );
   }
@@ -48,12 +54,12 @@ export default function PlayingCard({ card, faceDown = false, size = 'md', highl
 
   return (
     <div
-      className={`relative ${sizeConfig.box} ${colorStyles} rounded-lg shadow-md flex flex-col justify-between font-extrabold select-none overflow-hidden transition-all duration-200 hover:-translate-y-0.5 ${
+      className={`relative ${sizeConfig.box} ${colorStyles} rounded shadow-sm flex flex-col justify-between font-extrabold select-none overflow-hidden transition-all duration-200 hover:-translate-y-0.5 ${
         highlighted ? 'ring-2 ring-yellow-400 border-yellow-400 shadow-yellow-400/50 scale-105 z-10' : ''
       } ${className}`}
     >
       {/* Top Left Corner */}
-      <div className="flex flex-col items-center leading-tight">
+      <div className="flex flex-col items-center leading-none">
         <span className={sizeConfig.cornerRank}>{rankLabel}</span>
         <span className={sizeConfig.cornerSuit}>{suit}</span>
       </div>
@@ -64,7 +70,7 @@ export default function PlayingCard({ card, faceDown = false, size = 'md', highl
       </div>
 
       {/* Bottom Right Corner */}
-      <div className="flex flex-col items-center leading-tight rotate-180">
+      <div className="flex flex-col items-center leading-none rotate-180">
         <span className={sizeConfig.cornerRank}>{rankLabel}</span>
         <span className={sizeConfig.cornerSuit}>{suit}</span>
       </div>
