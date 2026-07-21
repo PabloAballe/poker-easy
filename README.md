@@ -63,4 +63,4 @@ Abre tu navegador en `http://localhost:5173/` para ver la aplicación.
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Libre para aprendizaje, modificación y distribución.
+Este proyecto es gratuito y libre para **uso personal y educativo no comercial** (CC BY-NC 4.0). Queda prohibida su explotación comercial o venta sin autorización expresa del autor.
