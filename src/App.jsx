@@ -73,8 +73,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950 flex flex-col antialiased">
-      {/* Navbar Header */}
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950 flex flex-col antialiased overflow-x-hidden">
+      {/* Navbar Header with Mobile Bottom Navigation */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -84,8 +84,8 @@ export default function App() {
         onOpenGlossary={(term) => setActiveGlossaryTerm(term || 'equity')}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+      {/* Main Content Area (padded for mobile bottom nav bar) */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 pb-20 md:pb-6">
         {activeTab === 'academy' && (
           <AcademyMain
             onEarnXP={handleEarnXP}
@@ -131,7 +131,7 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 p-4 text-center text-xs text-slate-500 flex items-center justify-center gap-3">
+      <footer className="border-t border-slate-900 bg-slate-950 p-4 text-center text-xs text-slate-500 hidden md:flex items-center justify-center gap-3">
         <span>Poker Easy Academy • Aprende sin esfuerzo</span>
         <button
           onClick={() => setActiveGlossaryTerm('equity')}
