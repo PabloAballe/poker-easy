@@ -26,12 +26,12 @@ export default function ActionControls({ gameState, onAction, disabled = false }
   };
 
   return (
-    <div className={`bg-slate-900/90 border border-slate-800 rounded-xl p-3 space-y-2.5 transition-opacity ${disabled ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 sm:p-3 space-y-2 transition-opacity ${disabled ? 'opacity-40 pointer-events-none' : ''}`}>
       {/* Raise Slider & Quick Bets */}
-      <div className="flex flex-col sm:flex-row items-center gap-2 bg-slate-950/60 p-2 rounded-lg border border-slate-800/80">
-        <div className="flex items-center gap-2 w-full sm:w-auto text-xs">
-          <span className="font-bold text-slate-400">Subir:</span>
-          <span className="font-black text-amber-400 min-w-[60px]">{raiseVal} 🪙</span>
+      <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 bg-slate-950/60 p-2 rounded-lg border border-slate-800/80">
+        <div className="flex items-center justify-between w-full sm:w-auto text-[11px] sm:text-xs">
+          <span className="font-bold text-slate-400">Subir a:</span>
+          <span className="font-black text-amber-400 min-w-[50px] text-right sm:text-left">{raiseVal} 🪙</span>
         </div>
 
         <input
@@ -44,64 +44,64 @@ export default function ActionControls({ gameState, onAction, disabled = false }
           className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
         />
 
-        <div className="flex gap-1 w-full sm:w-auto justify-end">
+        <div className="flex gap-1 w-full sm:w-auto justify-between sm:justify-end">
           <button
             onClick={() => setRaiseVal(minRaise)}
-            className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] font-bold"
+            className="flex-1 sm:flex-initial px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] sm:text-[11px] font-bold"
           >
             Min
           </button>
           <button
             onClick={() => setRaiseVal(Math.min(maxRaise, Math.round(gameState.pot * 0.5)))}
-            className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] font-bold"
+            className="flex-1 sm:flex-initial px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] sm:text-[11px] font-bold"
           >
             1/2 Pot
           </button>
           <button
             onClick={() => setRaiseVal(Math.min(maxRaise, gameState.pot))}
-            className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] font-bold"
+            className="flex-1 sm:flex-initial px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] sm:text-[11px] font-bold"
           >
             Pot
           </button>
           <button
             onClick={() => setRaiseVal(maxRaise)}
-            className="px-2 py-0.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border border-amber-500/30 rounded text-[11px] font-black"
+            className="flex-1 sm:flex-initial px-2 py-0.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border border-amber-500/30 rounded text-[10px] sm:text-[11px] font-black"
           >
             All-in
           </button>
         </div>
       </div>
 
-      {/* Primary Buttons */}
-      <div className="grid grid-cols-3 gap-2.5">
+      {/* Primary Action Buttons */}
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
         <button
           onClick={() => handleAction('FOLD')}
-          className="py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl shadow text-xs transition-all"
+          className="py-2.5 px-1 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl shadow text-[10px] sm:text-xs transition-all truncate"
         >
-          Retirarse (Fold)
+          Retirarse
         </button>
 
         {canCheck ? (
           <button
             onClick={() => handleAction('CHECK')}
-            className="py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-extrabold rounded-xl shadow text-xs transition-all"
+            className="py-2.5 px-1 bg-slate-700 hover:bg-slate-600 text-white font-extrabold rounded-xl shadow text-[10px] sm:text-xs transition-all truncate"
           >
-            Pasar (Check)
+            Pasar
           </button>
         ) : (
           <button
             onClick={() => handleAction('CALL')}
-            className="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold rounded-xl shadow text-xs transition-all"
+            className="py-2.5 px-1 bg-blue-600 hover:bg-blue-500 text-white font-extrabold rounded-xl shadow text-[10px] sm:text-xs transition-all truncate"
           >
-            Igualar {toCall} 🪙
+            Igualar {toCall}🪙
           </button>
         )}
 
         <button
           onClick={() => handleAction('RAISE', raiseVal)}
-          className="py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-xl shadow text-xs transition-all"
+          className="py-2.5 px-1 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black rounded-xl shadow text-[10px] sm:text-xs transition-all truncate"
         >
-          Subir a {raiseVal} 🪙
+          Subir {raiseVal}🪙
         </button>
       </div>
     </div>
